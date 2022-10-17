@@ -1,0 +1,23 @@
+name: Build assets
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build assets
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+      - run: git config --global user.email "it@positivegrid.com" 
+      - run: git config --global user.name "Bot"
+      - run: git checkout main-build
+      - run: git merge main -m "merge"
+      - run: npm install
+      - run: npm run build
+      - run: git add .
+      - run: git diff-index --quiet HEAD || git commit -m 'Production build by bot'
+      - run: git push main-build
