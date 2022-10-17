@@ -1,0 +1,47 @@
+# https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - main
+      - sandbox
+env:
+  GITHUB_ACTION_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+  SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - name: npm install, test and build
+        run: |
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          echo "${{ env.GITHUB_ACTION_URL }}"
+          npm install
+          npm run build
+      - name: Set current date as env variable
+        run: echo "NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
+        # ███████╗██╗   ██╗ ██████╗ ██████╗███████╗███████╗███████╗
+        # ██╔════╝██║   ██║██╔════╝██╔════╝██╔════╝██╔════╝██╔════╝
+        # ███████╗██║   ██║██║     ██║     █████╗  ███████╗███████╗
+        # ╚════██║██║   ██║██║     ██║     ██╔══╝  ╚════██║╚════██║
+        # ███████║╚██████╔╝╚██████╗╚██████╗███████╗███████║███████║
+        # ╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝╚══════╝╚══════╝╚══════╝
+      - name: Send notification to Slack
+        if: ${{ success() }}
+        run: |
+          curl --location --request POST '${{ env.SLACK_HOOK_URL }}' --header 'Content-Type:application/json' --data-raw '{"attachments": [{"color": "#00994D","blocks": [{"type": "section","text": {"type": "mrkdwn","text": ":white_check_mark: ${{ env.NOW }} ${{ env.BUILD_ENV }} deploy succeed! ${{ env.GITHUB_ACTION_URL }}"}}]}]}'
+        # ███████╗ █████╗ ██╗██╗     
+        # ██╔════╝██╔══██╗██║██║     
+        # █████╗  ███████║██║██║     
+        # ██╔══╝  ██╔══██║██║██║     
+        # ██║     ██║  ██║██║███████╗
+        # ╚═╝     ╚═╝  ╚═╝╚═╝╚══════╝
+      - name: Notify Slack Failure
+        if: ${{ failure() }}
+        run: |
+          curl --location --request POST '${{ env.SLACK_HOOK_URL }}' --header 'Content-Type:application/json' --data-raw '{"attachments": [{"color": "#e02020","blocks": [{"type": "section","text": {"type": "mrkdwn","text": ":x: ${{ env.NOW }} ${{ env.BUILD_ENV }} deploy failed! ${{ env.GITHUB_ACTION_URL }}"}}]}]}'
+
