@@ -5,7 +5,7 @@ on:
       - main
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest.github/workflows/
     steps:
       - uses: actions/checkout@v3
         with:
@@ -30,7 +30,7 @@ jobs:
           ls ${{ github.workspace }}
 
       - run: git pull
-      - run: git merge origin/main -m "merge"
+      - run: git merge origin/main -m "merge" --allow-unrelated-histories
       - run: npm install
       - run: npm run build
       - run: git add .
