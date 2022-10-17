@@ -29,6 +29,8 @@ jobs:
         run: |
           ls ${{ github.workspace }}
 
+      - name: Merge main
+      - run: git pull
       - run: git merge main -m "merge"
       - run: npm install
       - run: npm run build
