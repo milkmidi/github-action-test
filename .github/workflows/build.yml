@@ -15,6 +15,7 @@ jobs:
       - run: git config --global user.email "it@positivegrid.com" 
       - run: git config --global user.name "Bot"
       - run: git checkout main-build
+      - run: git pull
       - run: git merge main -m "merge"
       - run: npm install
       - run: npm run build
