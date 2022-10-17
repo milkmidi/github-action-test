@@ -15,15 +15,20 @@ jobs:
       - run: |
           git config --global user.email "it@positivegrid.com" 
           git config --global user.name "Bot"
+
+      - name: List files in the main branch
+        run: |
+          ls ${{ github.workspace }}
+        
       - uses: actions/checkout@v3
         with:
           ref: main-build
       - run: git checkout main-build 
-      - name: List files in the repository
+
+      - name: List files in the main-build
         run: |
           ls ${{ github.workspace }}
-      - run: echo "? This job's status is ${{ job.status }}."
-      - run: git pull
+
       - run: git merge main -m "merge"
       - run: npm install
       - run: npm run build
