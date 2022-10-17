@@ -12,8 +12,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16.x'
-      - run: git config --global user.email "it@positivegrid.com" 
-      - run: git config --global user.name "Bot"
+          ref: main-build
+      - run: |
+          git config --global user.email "it@positivegrid.com" 
+          git config --global user.name "Bot"
       - run: git checkout main-build 
       - name: List files in the repository
         run: |
