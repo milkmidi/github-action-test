@@ -30,7 +30,7 @@ jobs:
           ls ${{ github.workspace }}
 
       - run: git pull
-      - run: git merge main -m "merge"
+      - run: git merge origin/main -m "merge"
       - run: npm install
       - run: npm run build
       - run: git add .
