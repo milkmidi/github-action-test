@@ -58,13 +58,5 @@ jobs:
             for branch in "${remote_branch_array[@]}"; do
               branch_name=$(echo "$branch" | sed 's#refs/heads/##')
               git checkout -b "$branch_name"
-              if git merge origin/main-build; then
-                echo "success !"
-                git push --set-upstream origin "$branch_name"
-              else
-                exitcode=$?
-                echo "failure !"
-                git merge --abort;
-                exit $exitcode
-              fi
+              echo "$branch_name"
             done
