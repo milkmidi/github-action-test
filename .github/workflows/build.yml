@@ -42,3 +42,29 @@ jobs:
               git merge --abort;
               exit $exitcode
             fi
+
+  deploy-to-us-xx:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: git config --global user.email "it@positivegrid.com" 
+      - run: git config --global user.name "Bot"
+      - run: git fetch --unshallow
+      - name: git merge main-build & git push us-xx
+        run: |
+            remote_branches=$(git ls-remote --heads | awk '{print $2}' | grep 'refs/heads/\(us-\)')
+            IFS=$'\n' read -d '' -r -a remote_branch_array <<< "$remote_branches"
+            for branch in "${remote_branch_array[@]}"; do
+              branch_name=$(echo "$branch" | sed 's#refs/heads/##')
+              git checkout -b "$branch_name"
+              if git merge origin/main-build; then
+                echo "success !"
+                git push --set-upstream origin "$branch_name"
+              else
+                exitcode=$?
+                echo "failure !"
+                git merge --abort;
+                exit $exitcode
+              fi
+            done
