@@ -5,34 +5,19 @@ on:
       - main
 jobs:
   build:
-    runs-on: ubuntu-latest.github/workflows/
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Build assets
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '16.x'
-      - run: |
-          git config --global user.email "it@positivegrid.com" 
-          git config --global user.name "Bot"
-
-      - name: List files in the main branch
-        run: |
-          ls ${{ github.workspace }}
-        
-      - uses: actions/checkout@v3
-        with:
-          ref: main-build
-      - name: List files in the main-build
-        run: |
-          ls ${{ github.workspace }}
-
-      - run: git pull
-      - run: git merge origin/main -m "merge" --allow-unrelated-histories
+      - run: git config --global user.email "it@positivegrid.com" 
+      - run: git config --global user.name "Bot"
+      - run: git fetch --unshallow
+      - run: git checkout main-build
+      - run: git merge main
       - run: npm install
       - run: npm run build
       - run: git add .
       - run: git diff-index --quiet HEAD || git commit -m 'Production build by bot'
-      - run: git push main-build
+      - run: git push --set-upstream origin main-build
