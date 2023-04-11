@@ -51,10 +51,10 @@ jobs:
       - run: git config --global user.email "it@positivegrid.com" 
       - run: git config --global user.name "Bot"
       - run: git fetch --unshallow
+      - run: local_branches=$(git branch --list "ca-*" "us-*")
+      - run: IFS=$'\n' read -d '' -r -a local_branch_array <<< "$local_branches"
       - name: git merge main-build & git push us-xx
         run: |
-            local_branches=$(git branch --list "ca-*" "us-*")
-            IFS=$'\n' read -d '' -r -a local_branch_array <<< "$local_branches"
             for branch in "${local_branch_array[@]}"; do
               echo "$branch"
             done
