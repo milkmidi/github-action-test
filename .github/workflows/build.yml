@@ -21,3 +21,24 @@ jobs:
       - run: git add .
       - run: git diff-index --quiet HEAD || git commit -m 'Production build by bot'
       - run: git push --set-upstream origin main-build
+
+  deploy-to-us:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: git config --global user.email "it@positivegrid.com" 
+      - run: git config --global user.name "Bot"
+      - run: git fetch --unshallow
+      - run: git checkout us
+      - name: git merge main-build & git push us
+        run: |
+            if git merge origin/main-build; then
+              echo "success !"
+              git push --set-upstream origin us
+            else
+              exitcode=$?
+              echo "failure !"
+              git merge --abort;
+              exit $exitcode
+            fi
