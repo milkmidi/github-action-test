@@ -53,10 +53,8 @@ jobs:
       - run: git fetch --unshallow
       - name: git merge main-build & git push us-xx
         run: |
-            remote_branches=$(git ls-remote --heads | awk '{print $2}' | grep 'refs/heads/\(us-\)')
-            IFS=$'\n' read -d '' -r -a remote_branch_array <<< "$remote_branches"
-            for branch in "${remote_branch_array[@]}"; do
-              branch_name=$(echo "$branch" | sed 's#refs/heads/##')
-              git checkout -b "$branch_name"
-              echo "$branch_name"
+            local_branches=$(git branch --list "ca-*" "us-*")
+            IFS=$'\n' read -d '' -r -a local_branch_array <<< "$local_branches"
+            for branch in "${local_branch_array[@]}"; do
+              echo "$branch"
             done
