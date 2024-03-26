@@ -16,5 +16,5 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
       - run: echo "hi"
       - run: echo >> .env "SECRET_KEY=${SECRET_KEY}"
-      - run: npm run install
+      - run: npm install
       - run: npm run build
