@@ -1,8 +1,9 @@
-name: Build assets
+name: Deploy
 on:
   push:
     branches:
       - main
+      - sandbox
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,51 +11,5 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
-      - run: git config --global user.email "it@positivegrid.com" 
-      - run: git config --global user.name "Bot"
-      - run: git fetch --unshallow
-      - run: git checkout main-build
-      - run: git merge main
-      - run: npm install
-      - run: npm run build
-      - run: git add .
-      - run: git diff-index --quiet HEAD || git commit -m 'Production build by bot'
-      - run: git push --set-upstream origin main-build
-
-  deploy-to-us:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: git config --global user.email "it@positivegrid.com" 
-      - run: git config --global user.name "Bot"
-      - run: git fetch --unshallow
-      - run: git checkout us
-      - name: git merge main-build & git push us
-        run: |
-            if git merge origin/main-build; then
-              echo "success !"
-              git push --set-upstream origin us
-            else
-              exitcode=$?
-              echo "failure !"
-              git merge --abort;
-              exit $exitcode
-            fi
-
-  deploy-to-us-xx:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: git config --global user.email "it@positivegrid.com" 
-      - run: git config --global user.name "Bot"
-      - run: git fetch --unshallow
-      - run: local_branches=$(git branch --list "ca-*" "us-*")
-      - run: IFS=$'\n' read -d '' -r -a local_branch_array <<< "$local_branches"
-      - name: git merge main-build & git push us-xx
-        run: |
-            for branch in "${local_branch_array[@]}"; do
-              echo "$branch"
-            done
+          node-version: '18.x'
+      - run: echo "hi"
