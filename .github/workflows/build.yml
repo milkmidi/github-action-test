@@ -12,4 +12,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18.x'
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
       - run: echo "hi"
+      - run: echo >> .env "SECRET_KEY=${SECRET_KEY}"
+      - run: npm run install
+      - run: npm run build
