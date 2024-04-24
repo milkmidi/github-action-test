@@ -4,6 +4,9 @@ on:
     branches:
       - main
       - sandbox
+env:
+  GITHUB_ACTION_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,6 +23,7 @@ jobs:
       - name: npm install, test and build
         run: |
           echo "SECRET_KEY=${SECRET_KEY}" >> .env
+          echo "${{ env.GITHUB_ACTION_URL }}"
           npm install
           npm run build
   deploy:
