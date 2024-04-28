@@ -1,23 +1,43 @@
 {
-  "name": "github-action-test",
+  "name": "rollup",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "build": "webpack --mode production"
+    "dev": "rimraf ./dist && rollup -c --watch",
+    "build": "rimraf ./dist && rollup -c",
+    "build:types": "tsc -b ./tsconfig.types.json"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/milkmidi/github-action-test.git"
-  },
-  "author": "",
+  "author": "milkmidi@gmail.com",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/milkmidi/github-action-test/issues"
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
-  "homepage": "https://github.com/milkmidi/github-action-test#readme",
   "devDependencies": {
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0"
+    "@rollup/plugin-terser": "^0.4.4",
+    "@types/lodash": "^4.17.0",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.7.1",
+    "@typescript-eslint/parser": "^7.7.1",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.17.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.4.5"
   }
 }
