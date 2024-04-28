@@ -1,5 +1,5 @@
 # https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-name: Build and Deploy to Some Server
+name: Build and Deploy
 on:
   push:
     branches:
@@ -26,17 +26,25 @@ jobs:
         run: echo "NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
       - name: Echo current date
         run: echo $NOW
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.x'
-
-      - name: npm install, test and build
+        run: echo "deploying to server"
+        # ███████╗██╗   ██╗ ██████╗ ██████╗███████╗███████╗███████╗
+        # ██╔════╝██║   ██║██╔════╝██╔════╝██╔════╝██╔════╝██╔════╝
+        # ███████╗██║   ██║██║     ██║     █████╗  ███████╗███████╗
+        # ╚════██║██║   ██║██║     ██║     ██╔══╝  ╚════██║╚════██║
+        # ███████║╚██████╔╝╚██████╗╚██████╗███████╗███████║███████║
+        # ╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝╚══════╝╚══════╝╚══════╝
+      - name: Send notification to Slack
+        if: ${{ success() }}
         run: |
-          echo "deploying to server"
+          curl --location --request POST '${{ env.SLACK_HOOK_URL }}' --header 'Content-Type:application/json' --data-raw '{"attachments": [{"color": "#00994D","blocks": [{"type": "section","text": {"type": "mrkdwn","text": ":white_check_mark: pg-web-components ${{ env.BUILD_ENV }} deploy succeed! ${{ env.GITHUB_ACTION_URL }}"}}]}]}'
+        # ███████╗ █████╗ ██╗██╗     
+        # ██╔════╝██╔══██╗██║██║     
+        # █████╗  ███████║██║██║     
+        # ██╔══╝  ██╔══██║██║██║     
+        # ██║     ██║  ██║██║███████╗
+        # ╚═╝     ╚═╝  ╚═╝╚═╝╚══════╝
+      - name: Notify Slack Failure
+        if: ${{ failure() }}
+        run: |
+          curl --location --request POST '${{ env.SLACK_HOOK_URL }}' --header 'Content-Type:application/json' --data-raw '{"attachments": [{"color": "#e02020","blocks": [{"type": "section","text": {"type": "mrkdwn","text": ":x: pg-web-components ${{ env.BUILD_ENV }} deploy failed! ${{ env.GITHUB_ACTION_URL }}"}}]}]}'
+
