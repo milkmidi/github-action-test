@@ -2,8 +2,8 @@ const webpack = require('webpack');
 const path = require('path');
 const BUILD_ENTRY = {
   // components
-  abc: './src/abc.js',
-  def: './src/def.js',
+  a: './src/a.js',
+  b: './src/b.js',
 };
 
 module.exports = (env, argv) => {
