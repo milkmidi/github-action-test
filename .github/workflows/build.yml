@@ -24,8 +24,6 @@ jobs:
           npm run build
       - name: Set current date as env variable
         run: echo "NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
-      - name: Echo current date
-        run: echo $NOW
         # ███████╗██╗   ██╗ ██████╗ ██████╗███████╗███████╗███████╗
         # ██╔════╝██║   ██║██╔════╝██╔════╝██╔════╝██╔════╝██╔════╝
         # ███████╗██║   ██║██║     ██║     █████╗  ███████╗███████╗
@@ -35,7 +33,7 @@ jobs:
       - name: Send notification to Slack
         if: ${{ success() }}
         run: |
-          curl --location --request POST '${{ env.SLACK_HOOK_URL }}' --header 'Content-Type:application/json' --data-raw '{"attachments": [{"color": "#00994D","blocks": [{"type": "section","text": {"type": "mrkdwn","text": ":white_check_mark: ${{ env.BUILD_ENV }} deploy succeed! ${{ env.GITHUB_ACTION_URL }}"}}]}]}'
+          curl --location --request POST '${{ env.SLACK_HOOK_URL }}' --header 'Content-Type:application/json' --data-raw '{"attachments": [{"color": "#00994D","blocks": [{"type": "section","text": {"type": "mrkdwn","text": ":white_check_mark: ${{ env.NOW }} ${{ env.BUILD_ENV }} deploy succeed! ${{ env.GITHUB_ACTION_URL }}"}}]}]}'
         # ███████╗ █████╗ ██╗██╗     
         # ██╔════╝██╔══██╗██║██║     
         # █████╗  ███████║██║██║     
@@ -45,5 +43,5 @@ jobs:
       - name: Notify Slack Failure
         if: ${{ failure() }}
         run: |
-          curl --location --request POST '${{ env.SLACK_HOOK_URL }}' --header 'Content-Type:application/json' --data-raw '{"attachments": [{"color": "#e02020","blocks": [{"type": "section","text": {"type": "mrkdwn","text": ":x: ${{ env.BUILD_ENV }} deploy failed! ${{ env.GITHUB_ACTION_URL }}"}}]}]}'
+          curl --location --request POST '${{ env.SLACK_HOOK_URL }}' --header 'Content-Type:application/json' --data-raw '{"attachments": [{"color": "#e02020","blocks": [{"type": "section","text": {"type": "mrkdwn","text": ":x: ${{ env.NOW }} ${{ env.BUILD_ENV }} deploy failed! ${{ env.GITHUB_ACTION_URL }}"}}]}]}'
 
