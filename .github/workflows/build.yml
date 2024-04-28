@@ -7,7 +7,7 @@ on:
       - sandbox
 env:
   GITHUB_ACTION_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
+  SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL }}
 jobs:
   build:
     runs-on: ubuntu-latest
