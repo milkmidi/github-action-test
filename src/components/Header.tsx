@@ -1,9 +1,14 @@
 import React from 'react';
 
-export default function Header() {
+type HeaderType = {
+  title?: string;
+};
+
+export default function Header(props: HeaderType) {
+  const { title = 'default title' } = props;
   return (
     <header>
-      <h1>My App</h1>
+      <h1>{title}</h1>
     </header>
   );
 }
