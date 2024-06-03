@@ -1,3 +1,5 @@
+import { pipe } from './pipe-utils';
+
 type ProductType = {
   id: number;
   title: string;
@@ -18,6 +20,32 @@ type NormalizeProductType = ProductType & {
   limit: number;
 };
 
+const adjustProductLimit = (cart: CartType<ProductType>) => {
+  return cart.lineItems.map((product) => {
+    const canChangeQuantity = product.sku !== '123';
+    return {
+      ...product,
+      canChangeQuantity,
+    };
+  });
+};
+
+const adjustProductPrice = (cart: CartType<ProductType>) => {
+  return cart.lineItems.map((product) => {
+    const originalPrice = product.price;
+    const price = product.price * 30;
+    const currency = 'TWD';
+    const discount = originalPrice - price;
+    return {
+      ...product,
+      originalPrice,
+      price,
+      currency,
+      discount,
+    };
+  });
+};
+
 /**
  * 從購物車 API 拿到資料後要做以下事情
  * 1 部份商品不能更改數量
@@ -27,28 +55,15 @@ type NormalizeProductType = ProductType & {
  * 5 商品數量限制
  * 6 新的其他規則
  */
-export const fetchCartData = (): Promise<CartType<NormalizeProductType>> => {
-  return fetch('/some-mock-api/cart')
-    .then((response) => response.json())
-    .then((cart: CartType<ProductType>) => {
-      const lineItems = cart.lineItems.map((product) => {
-        const canChangeQuantity = product.sku !== '123';
-        const originalPrice = product.price;
-        const price = product.price * 30;
-        const currency = 'TWD';
-        const discount = originalPrice - price;
-        const limit = 10;
-        return {
-          ...product,
-          canChangeQuantity,
-          originalPrice,
-          price,
-          currency,
-          discount,
-          limit,
-        } as NormalizeProductType;
-      });
-      const totalPrice = lineItems.reduce((total, product) => total + product.price, 0);
-      return { lineItems, totalPrice };
-    });
+
+export const fetchCartData = (): Promise<CartType<ProductType>> => {
+  return fetch('/some-mock-api/cart').then((response) => response.json());
+};
+
+export const getCartData = async (): Promise<CartType<NormalizeProductType>> => {
+  const pipeline = pipe(adjustProductLimit, adjustProductPrice);
+
+  const cart = await fetchCartData();
+  // @ts-ignore
+  return pipeline(cart) as CartType<NormalizeProductType>;
 };
