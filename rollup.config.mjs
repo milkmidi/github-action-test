@@ -9,7 +9,7 @@ const options = {
     { file: 'dist/bundle.cjs.min.js', format: 'cjs', plugins: [terser()] },
     { file: 'dist/bundle.es.js', format: 'es' },
     { file: 'dist/bundle.es.min.js', format: 'es', plugins: [terser()] },
-    /*
+
     {
       name: 'RollupTemplate',
       file: 'dist/bundle.umd.js',
@@ -18,7 +18,7 @@ const options = {
         lodash: '_',
         react: 'React',
       },
-    }, // */
+    }, //
   ],
   plugins: [
     // https://www.npmjs.com/package/rollup-plugin-typescript2
