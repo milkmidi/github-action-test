@@ -21,7 +21,15 @@ jobs:
       - name: Upload each Markdown file to conversion service
         env:
           UPLOAD_URL: https://docs-upload.example.com/upload  # 改成你實際服務的 URL
+          DOCS_UPLOAD_TOKEN: ${{ secrets.DOCS_UPLOAD_TOKEN }}
         run: |
           for file in ${{ steps.find_md.outputs.FILES }}; do
             echo "Found file: $file"
+            curl -X POST "$UPLOAD_URL" \
+              -H "Authorization: Bearer ${{ secrets.DOCS_UPLOAD_TOKEN }}" \
+              -F "file=@$file" \
+              --fail || {
+                echo "❌ Failed to upload $file"
+                exit 1
+              }
           done
