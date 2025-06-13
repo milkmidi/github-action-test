@@ -7,6 +7,11 @@ on:
       - sandbox
   repository_dispatch:
     types: [external-trigger]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   GITHUB_ACTION_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
   SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL }}
