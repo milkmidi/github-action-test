@@ -1,35 +1,35 @@
 name: Upload Markdown to Remote Service
 
-on:
-  push:
-    branches: [main]
-    paths:
-      - 'md-to-html/docs/**/*.md'
+# on:
+#   push:
+#     branches: [main]
+#     paths:
+#       - 'md-to-html/docs/**/*.md'
 
-jobs:
-  upload-docs:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+# jobs:
+#   upload-docs:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
 
-      - name: Find Markdown files in md-to-html/docs
-        id: find_md
-        run: |
-          echo "FILES=$(find md-to-html/docs -type f -name '*.md' | tr '\n' ' ')" >> $GITHUB_OUTPUT
+#       - name: Find Markdown files in md-to-html/docs
+#         id: find_md
+#         run: |
+#           echo "FILES=$(find md-to-html/docs -type f -name '*.md' | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
-      - name: Upload each Markdown file to conversion service
-        env:
-          UPLOAD_URL: https://docs-upload.example.com/upload  # 改成你實際服務的 URL
-          DOCS_UPLOAD_TOKEN: ${{ secrets.DOCS_UPLOAD_TOKEN }}
-        run: |
-          for file in ${{ steps.find_md.outputs.FILES }}; do
-            echo "Found file: $file"
-            curl -X POST "$UPLOAD_URL" \
-              -H "Authorization: Bearer ${{ secrets.DOCS_UPLOAD_TOKEN }}" \
-              -F "file=@$file" \
-              --fail || {
-                echo "❌ Failed to upload $file"
-                exit 1
-              }
-          done
+#       - name: Upload each Markdown file to conversion service
+#         env:
+#           UPLOAD_URL: https://docs-upload.example.com/upload  # 改成你實際服務的 URL
+#           DOCS_UPLOAD_TOKEN: ${{ secrets.DOCS_UPLOAD_TOKEN }}
+#         run: |
+#           for file in ${{ steps.find_md.outputs.FILES }}; do
+#             echo "Found file: $file"
+#             curl -X POST "$UPLOAD_URL" \
+#               -H "Authorization: Bearer ${{ secrets.DOCS_UPLOAD_TOKEN }}" \
+#               -F "file=@$file" \
+#               --fail || {
+#                 echo "❌ Failed to upload $file"
+#                 exit 1
+#               }
+#           done
