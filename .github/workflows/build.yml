@@ -23,6 +23,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18.x'
+      - name: get payload data
+        run: |
+          echo "BRANCH=${{ github.event.client_payload.branch }}" >> $GITHUB_ENV
+          echo "${{ github.event.client_payload.branch }}"
       - name: npm install, test and build
         run: |
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
