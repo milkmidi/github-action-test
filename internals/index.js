@@ -1,5 +1,4 @@
-// env node js
-require('dotenv').config();
+import 'dotenv/config';
 
 const mockKey = process.env.MOCK_KEY;
 
