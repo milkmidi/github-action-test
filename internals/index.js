@@ -2,7 +2,12 @@ import 'dotenv/config';
 
 const mockKey = process.env.MOCK_KEY;
 
-console.log('Mock Key:', mockKey);
+if (!mockKey) {
+  throw new Error('MOCK_KEY is not defined in the environment variables');
+}
 
 const secretKey = process.env.SECRET_KEY;
-console.log('Secret Key:', secretKey);
+if (!secretKey) {
+  throw new Error('SECRET_KEY is not defined in the environment variables');
+}
+// console.log('Secret Key:', secretKey);
