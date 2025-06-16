@@ -17,6 +17,27 @@ env:
   GITHUB_ACTION_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
   SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL }}
 jobs:
+  test: 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+      - run: npm install
+      - run: npm test
+  node-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - name: node-build
+        env:
+          MOCK_KEY: ${{ secrets.MOCK_KEY }}
+        run: |
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          npm install
+          node ./internals/index.js
   build:
     runs-on: ubuntu-latest
     steps:
@@ -40,7 +61,6 @@ jobs:
           echo "${{ env.GITHUB_ACTION_URL }}"
           echo "${{ env.NOW }}"
           npm install
-          node ./internals/index.js
           npm run build
         # ------------------------------------------------------------------
         # ███████╗██╗   ██╗ ██████╗ ██████╗███████╗███████╗███████╗
@@ -64,3 +84,17 @@ jobs:
         run: |
           curl --location --request POST '${{ env.SLACK_HOOK_URL }}' --header 'Content-Type:application/json' --data-raw '{"attachments": [{"color": "#e02020","blocks": [{"type": "section","text": {"type": "mrkdwn","text": ":x: ${{ env.NOW }} ${{ env.BUILD_ENV }} deploy failed! ${{ env.GITHUB_ACTION_URL }}"}}]}]}'
 
+  slack-notification:
+    if: always()
+    needs:
+      - test
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ (needs.test.result == 'failure' || needs.build.result == 'failure') }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,pullRequest
+        env:
+          SLACK_WEBHOOK_URL: ${{ env.SLACK_HOOK_URL }}
