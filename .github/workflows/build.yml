@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - sandbox
+      - dev
   repository_dispatch:
     types: [external-trigger]
 
@@ -27,14 +28,20 @@ jobs:
         run: |
           echo "BRANCH=${{ github.event.client_payload.branch }}" >> $GITHUB_ENV
           echo "${{ github.event.client_payload.branch }}"
+        # ------------------------------------------------------------------
+      - name: Set current date as env variable
+        run: echo "NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
+        # ------------------------------------------------------------------
       - name: npm install, test and build
+        env:
+          MOCK_KEY: ${{ secrets.MOCK_KEY }}
         run: |
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
           echo "${{ env.GITHUB_ACTION_URL }}"
           npm install
+          node ./internals/index.js
           npm run build
-      - name: Set current date as env variable
-        run: echo "NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
+        # ------------------------------------------------------------------
         # ███████╗██╗   ██╗ ██████╗ ██████╗███████╗███████╗███████╗
         # ██╔════╝██║   ██║██╔════╝██╔════╝██╔════╝██╔════╝██╔════╝
         # ███████╗██║   ██║██║     ██║     █████╗  ███████╗███████╗
