@@ -26,7 +26,6 @@ jobs:
             } else {
               throw new Error('Mock key is not set correctly');
             }
-            const fetch = require('node-fetch');
             const slackWebhookUrl = process.env.SLACK_HOOK_URL;
             const payload = {
               text: '🚀 建立與部署流程已執行完成！'
