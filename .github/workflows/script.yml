@@ -5,20 +5,18 @@ on:
       - dev
   
 jobs:
-  build:
+  script-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - uses: actions/github-script@v7
-        with:
-          node-version: '20.x'
-      - name: script
+      - uses: actions/checkout@v4
+      - name: github-script-test
+        uses: actions/github-script@v7
         env:
           MOCK_KEY: ${{ secrets.MOCK_KEY }}
           SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL }}
         with:
           script: |
+            // https://github.com/actions/github-script
             const mockKey = process.env.MOCK_KEY;
             if( mockKey === 'mock123') {
               console.log('Mock key is set correctly');
