@@ -6,6 +6,10 @@ if (!mockKey) {
   throw new Error('MOCK_KEY is not defined in the environment variables');
 }
 
+if (mockKey === 'mock123') {
+  console.log('Mock Key is set to mock123, using mock data');
+}
+
 const secretKey = process.env.SECRET_KEY;
 if (!secretKey) {
   throw new Error('SECRET_KEY is not defined in the environment variables');
