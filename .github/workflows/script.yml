@@ -1,0 +1,51 @@
+# https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - main
+      - sandbox
+      - dev
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - uses: actions/github-script@v7
+        with:
+          node-version: '20.x'
+      - name: npm install, test and build
+        env:
+          MOCK_KEY: ${{ secrets.MOCK_KEY }}
+          SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL }}
+        with:
+          script: |
+            const mockKey = process.env.MOCK_KEY;
+            if( mockKey === 'mock123') {
+              console.log('Mock key is set correctly');
+            } else {
+              throw new Error('Mock key is not set correctly');
+            }
+            const fetch = require('node-fetch');
+            const slackWebhookUrl = process.env.SLACK_HOOK_URL;
+            const payload = {
+              text: '🚀 建立與部署流程已執行完成！'
+            };
+            if (slackWebhookUrl) {
+              fetch(slackWebhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+              })
+                .then(res => {
+                  if (!res.ok) throw new Error('Slack 物件傳送失敗');
+                  console.log('Slack 物件傳送成功');
+                })
+                .catch(err => {
+                  console.error('Slack 物件傳送錯誤:', err);
+                });
+            } else {
+              console.warn('未設定 SLACK_WEBHOOK_URL，略過 Slack 通知');
+            }

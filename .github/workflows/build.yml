@@ -38,6 +38,7 @@ jobs:
         run: |
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
           echo "${{ env.GITHUB_ACTION_URL }}"
+          echo "${{ env.NOW }}"
           npm install
           node ./internals/index.js
           npm run build
